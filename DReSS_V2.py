@@ -61,13 +61,14 @@ import fitter
 """
 
 def main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
-    """主函数1
-    这个函数有三个参数
-    可以控制邻接矩阵、更新阈值以及遍历模式
-    默认是将网络中的1连边变为0
-    可以将mode设置为：(1,0) --- 将网络中的连边变为0
-                     (0,1) --- 将网络中空白位置变为1
-                     (0,-1) --- 将网络中空白位置变为-1
+    """Main Function for calculating DReSS
+    There are four parameters
+    A is adjacency matrix of origin network
+    mode can be chosen from follows:
+                     (1,0) --- perturbation that delete existing interactions
+                     (0,1) --- perturbation that add activation interactions
+                     (0,-1) --- perturbation that add inhibition interactions
+    print_switch is a parameter choose to display current progress or not
     """
     start = time.process_time()
     if A == None:
@@ -84,18 +85,18 @@ def main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
             )
     if threshold == None:
         threshold = [0,-1,0,0,0,0,0,0,0]
-    """以上是默认参数设定环节"""
+    """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
 
-    if mode[0] != 0:         #如果模式不等于0，则为去边模式
-        pos = mat_find_nonzero(A_1)    #在去边模式下，寻找所有邻接矩阵中非零位置
-    if mode[0] == 0:         #如果模式等于0，则为加边模式
-        pos = mat_find_zero(A_1)       #在去边模式下，寻找所有邻接矩阵中非零位置
+    if mode[0] != 0:         #mode determine
+        pos = mat_find_nonzero(A_1)    #In deleting mode, find all non-zero position in A
+    if mode[0] == 0:         
+        pos = mat_find_zero(A_1)       #In adding mode, find all non-zero position in A
     
-    basin_ori = Basin_with_plot(A = A,threshold = threshold)   #原始吸引盆
+    basin_ori = Basin_with_plot(A = A,threshold = threshold)   #Calculation of origin attractor basin
     basin_o = basin_ori[1]
         
     pos_haming_simi_basin = {}
@@ -108,20 +109,21 @@ def main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
         pos_haming_simi_basin[temp_pos] = temp
         A_1 = list(A)
         if print_switch == 'on':
-            print('当前进度为：', (i+1)/len(range(len(pos))))
+            print((i+1)/len(range(len(pos))))
             
     elapsed = (time.process_time() - start)
     print("总计用时",elapsed)
     return pos_haming_simi_basin
 
 def diag_main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
-    """主函数1
-    这个函数有三个参数
-    可以控制邻接矩阵、更新阈值以及遍历模式
-    默认是将网络中的1连边变为0
-    可以将mode设置为：(1,0) --- 将网络中的连边变为0
-                     (0,1) --- 将网络中空白位置变为1
-                     (0,-1) --- 将网络中空白位置变为-1
+    """Main Function for calculating diagDReSS
+    There are four parameters
+    A is adjacency matrix of origin network
+    mode can be chosen from follows:
+                     (1,0) --- perturbation that delete existing interactions
+                     (0,1) --- perturbation that add activation interactions
+                     (0,-1) --- perturbation that add inhibition interactions
+    print_switch is a parameter choose to display current progress or not
     """
     start = time.process_time()
     if A == None:
@@ -138,18 +140,18 @@ def diag_main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
             )
     if threshold == None:
         threshold = [0,-1,0,0,0,0,0,0,0]
-    """以上是默认参数设定环节"""
+    """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
 
-    if mode[0] != 0:         #如果模式不等于0，则为去边模式
-        pos = mat_find_nonzero(A_1)    #在去边模式下，寻找所有邻接矩阵中非零位置
-    if mode[0] == 0:         #如果模式等于0，则为加边模式
-        pos = mat_find_zero(A_1)       #在去边模式下，寻找所有邻接矩阵中非零位置
+    if mode[0] != 0:         #mode determine
+        pos = mat_find_nonzero(A_1)    #In deleting mode, find all non-zero position in A
+    if mode[0] == 0:         
+        pos = mat_find_zero(A_1)       #In adding mode, find all non-zero position in A
     
-    basin_ori = Basin_with_plot(A = A,threshold = threshold)   #原始吸引盆
+    basin_ori = Basin_with_plot(A = A,threshold = threshold)   #Calculation of origin attractor basin
     basin_o = basin_ori[1]
     basin_o_diag = diag_array(basin_o)
         
