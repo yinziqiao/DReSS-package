@@ -173,6 +173,12 @@ def diag_main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
     return pos_haming_simi_basin
 
 def Bonferroni(A = None, B = None):
+    """Function for Bonferroni Test with two parameters
+    A is the test set with position information
+    B is the control set with only values from randomized controlled trial
+    result return to a dictionary with Position, p-value, significance
+    and write it to an csv file named 'result.csv'
+    """
     if A == None:
         A = {(0,1):0.9,(0,4):0.8}
     if B == None:
@@ -201,6 +207,20 @@ def Bonferroni(A = None, B = None):
     return Bon_p
 
 def random_times(times = None, nettype = 'ER',mode = (1,0)):
+    """Function for DReSS randomized controlled trial
+    There are 3 parameters
+    times control the random times for randomized controlled trial
+    nettype can be chosen from followed:
+                        'ER' for ER random networks
+                        'WS' for WS small world networks
+                        'BA' for BA scale free networks
+    mode can be chosen from follows:
+                     (1,0) --- perturbation that delete existing interactions
+                     (0,1) --- perturbation that add activation interactions
+                     (0,-1) --- perturbation that add inhibition interactions
+    result return to control set with only DReSS values from randomized controlled trial
+    and will be written into a xls file named xxx_times_ER/WS/BA_replace_mode[0]tomode[1].xls
+    """
     # aa = random_times(times = 3, nettype = 'ER',mode = (1,0))
     start = time.process_time()
     if times == None:
@@ -222,6 +242,20 @@ def random_times(times = None, nettype = 'ER',mode = (1,0)):
     print("总计用时",elapsed)
     
 def random_times_diag(times = None, nettype = 'ER',mode = (1,0)):
+    """Function for diagDReSS randomized controlled trial
+    There are 3 parameters
+    times control the random times for randomized controlled trial
+    nettype can be chosen from followed:
+                        'ER' for ER random networks
+                        'WS' for WS small world networks
+                        'BA' for BA scale free networks
+    mode can be chosen from follows:
+                     (1,0) --- perturbation that delete existing interactions
+                     (0,1) --- perturbation that add activation interactions
+                     (0,-1) --- perturbation that add inhibition interactions
+    result return to control set with only diagDReSS values from randomized controlled trial
+    and will be written into a xls file named xxx_times_ER/WS/BA_replace_mode[0]tomode[1].xls
+    """
     # aa = random_times(times = 3, nettype = 'ER',mode = (1,0))
     start = time.process_time()
     if times == None:
@@ -244,19 +278,21 @@ def random_times_diag(times = None, nettype = 'ER',mode = (1,0)):
 
 
 def data_write(file_path, datas):
+    """ function for data writing"""
     f = xlwt.Workbook()
-    sheet1 = f.add_sheet(u'sheet1',cell_overwrite_ok=True) #创建sheet
+    sheet1 = f.add_sheet(u'sheet1',cell_overwrite_ok=True) #create a sheet
     
-    #将数据写入第 i 行，第 j 列
+    #write data into row i column j
     i = 0
     for data in datas:
         for j in range(len(data)):
             sheet1.write(j,i,data[j])
         i = i + 1
         
-    f.save(file_path) #保存文件
+    f.save(file_path) #save file
 
-def data_write_csv(file_name, datas):#file_name为写入CSV文件的路径，datas为要写入数据列表
+def data_write_csv(file_name, datas):
+    """function for data csv writing"""
     file_csv = codecs.open(file_name,'a+','utf-8')#追加
     writer = csv.writer(file_csv, delimiter=' ', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
     for data in datas:
