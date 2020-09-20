@@ -300,6 +300,15 @@ def data_write_csv(file_name, datas):
     print("保存文件成功，处理结束")
     
 def result_read(result_mode = 0):
+    """read function DReSS result and turn it into format that can be read by function Bonferroni
+    result_mode can be chosen from follows:
+        'r0' for reading real_network deleting interaction results
+        'r1' for reading real_network adding a actication interaction results
+        'r-1' for reading real_network adding a inhibition interaction results
+        '0' for reading randomized trials deleting interaction results
+        '1' for reading randomized trials adding a actication interaction results
+        '-1' for reading randomized trials adding a inhibition interaction results
+    """
     if type(result_mode) == str:
         data = xlrd.open_workbook('Real_network.xls')
         values=[]
@@ -371,6 +380,15 @@ def result_read(result_mode = 0):
     return values
 
 def result_read_diag(result_mode = 0):
+    """read function diagDReSS result and turn it into format that can be read by function Bonferroni
+    result_mode can be chosen from follows:
+        'r0' for reading real_network deleting interaction results
+        'r1' for reading real_network adding a actication interaction results
+        'r-1' for reading real_network adding a inhibition interaction results
+        '0' for reading randomized trials deleting interaction results
+        '1' for reading randomized trials adding a actication interaction results
+        '-1' for reading randomized trials adding a inhibition interaction results
+    """
     if type(result_mode) == str:
         data = xlrd.open_workbook('Real_network.xls')
         values=[]
@@ -442,6 +460,8 @@ def result_read_diag(result_mode = 0):
     return values
 
 def result_fit(result = 0):
+    """Function for result fitting
+    """
     result_data = result_read(result_mode = result)
     f = fitter.Fitter(result_data)
     f.fit()
