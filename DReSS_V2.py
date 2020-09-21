@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jan 4 15:50:00 2020
+Created on Thu Apr 18 16:57:23 2019
 
-@author: 殷子樵
+@author: 殷子樵 Yin Ziqiao
 
 
 import numpy as np             
@@ -166,7 +166,7 @@ def diag_main(A = None, mode = (1,0), threshold = None, print_switch = 'on'):
         pos_haming_simi_basin[temp_pos] = temp
         A_1 = list(A)
         if print_switch == 'on':
-            print('当前进度为：', (i+1)/len(range(len(pos))))
+            print((i+1)/len(range(len(pos))))
             
     elapsed = (time.process_time() - start)
     print("总计用时",elapsed)
@@ -234,7 +234,7 @@ def random_times(times = None, nettype = 'ER',mode = (1,0)):
         temp = main(A = G, mode = mode, threshold = (0,0,0,0,0,0,0,0,0), print_switch = 'off')
         result = tuple(temp.values())        
         random_results.append(result)
-        print('当前进度为：', (i+1)/times)
+        print((i+1)/times)
         del G
     
     data_write(file_name, random_results)
@@ -269,12 +269,12 @@ def random_times_diag(times = None, nettype = 'ER',mode = (1,0)):
         temp = diag_main(A = G, mode = mode, threshold = (0,0,0,0,0,0,0,0,0), print_switch = 'off')
         result = tuple(temp.values())        
         random_results.append(result)
-        print('当前进度为：', (i+1)/times)
+        print((i+1)/times)
         del G
     
     data_write(file_name, random_results)
     elapsed = (time.process_time() - start)
-    print("总计用时",elapsed)
+    print(elapsed)
 
 
 def data_write(file_path, datas):
@@ -293,11 +293,11 @@ def data_write(file_path, datas):
 
 def data_write_csv(file_name, datas):
     """function for data csv writing"""
-    file_csv = codecs.open(file_name,'a+','utf-8')#追加
+    file_csv = codecs.open(file_name,'a+','utf-8') #add
     writer = csv.writer(file_csv, delimiter=' ', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
     for data in datas:
         writer.writerow(data)
-    print("保存文件成功，处理结束")
+    print("sace successfully")
     
 def result_read(result_mode = 0):
     """read function DReSS result and turn it into format that can be read by function Bonferroni
@@ -314,8 +314,8 @@ def result_read(result_mode = 0):
         values=[]
         
         table = data.sheets()[0]
-        nrows = table.nrows #行数
-        ncols = table.ncols #列数
+        nrows = table.nrows #row
+        ncols = table.ncols #column
         if result_mode == 'r0':
             col = 0
         elif result_mode == 'r1':
@@ -346,8 +346,8 @@ def result_read(result_mode = 0):
             data_WS = xlrd.open_workbook('100_times_WS_replace_0to-1.xls')
     
         table_ER = data_ER.sheets()[0]
-        nrows = table_ER.nrows #行数
-        ncols = table_ER.ncols #列数
+        nrows = table_ER.nrows #row
+        ncols = table_ER.ncols #column
 
         values=[]
         for x in range(nrows):
@@ -356,8 +356,8 @@ def result_read(result_mode = 0):
                 values.append(row[i])
 
         table_BA = data_BA.sheets()[0]
-        nrows = table_BA.nrows #行数
-        ncols = table_BA.ncols #列数
+        nrows = table_BA.nrows #row
+        ncols = table_BA.ncols #column
         
         for x in range(nrows):
             row =table_BA.row_values(x)
@@ -365,8 +365,8 @@ def result_read(result_mode = 0):
                 values.append(row[i])
             
         table_WS = data_WS.sheets()[0]
-        nrows = table_WS.nrows #行数
-        ncols = table_WS.ncols #列数
+        nrows = table_WS.nrows #row
+        ncols = table_WS.ncols #column
 
         for x in range(nrows):
             row =table_WS.row_values(x)
@@ -394,8 +394,8 @@ def result_read_diag(result_mode = 0):
         values=[]
         
         table = data.sheets()[0]
-        nrows = table.nrows #行数
-        ncols = table.ncols #列数
+        nrows = table.nrows #row
+        ncols = table.ncols #column
         if result_mode == 'r0':
             col = 0
         elif result_mode == 'r1':
@@ -426,8 +426,8 @@ def result_read_diag(result_mode = 0):
             data_WS = xlrd.open_workbook('100_times_WS_replace_0to-1_diag.xls')
     
         table_ER = data_ER.sheets()[0]
-        nrows = table_ER.nrows #行数
-        ncols = table_ER.ncols #列数
+        nrows = table_ER.nrows #row
+        ncols = table_ER.ncols #column
 
         values=[]
         for x in range(nrows):
@@ -436,8 +436,8 @@ def result_read_diag(result_mode = 0):
                 values.append(row[i])
 
         table_BA = data_BA.sheets()[0]
-        nrows = table_BA.nrows #行数
-        ncols = table_BA.ncols #列数
+        nrows = table_BA.nrows #row
+        ncols = table_BA.ncols #column
         
         for x in range(nrows):
             row =table_BA.row_values(x)
@@ -445,8 +445,8 @@ def result_read_diag(result_mode = 0):
                 values.append(row[i])
             
         table_WS = data_WS.sheets()[0]
-        nrows = table_WS.nrows #行数
-        ncols = table_WS.ncols #列数
+        nrows = table_WS.nrows #row
+        ncols = table_WS.ncols #column
 
         for x in range(nrows):
             row =table_WS.row_values(x)
@@ -494,27 +494,27 @@ def bio_update(A = None,x0 = None,threshold = None):
         x0 = [1,0,0]    
     if threshold == None:
         threshold = [0,-1,0]      
-    """以上是默认参数设定环节"""
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节""" 
+    """unzip part ends here"""
     
-    if len(A_1) != len(x0):                                               #A x0 threshold三个的维度必须相同，即网络节点数
-        raise AssertionError("邻接矩阵维度与初始状态向量维度不匹配")
+    if len(A_1) != len(x0):                                               #A x0 threshold must with same dimension
+        raise AssertionError("A x0 must with same dimension")
     if len(x0) != len(threshold):
-        raise AssertionError("初始状态向量维度与阈值向量维度不匹配")
+        raise AssertionError("x0 threshold must with same dimension")
     if len(A_1) != len(threshold):
-        raise AssertionError("邻接矩阵维度与阈值向量维度不匹配")           
+        raise AssertionError("A threshold must with same dimension")           
         
-    A_2 = np.matrix(A_1)                       #将输入邻接矩阵列表矩阵化
-    x_ini = x0[:]                          #复制保存初始状态
-    x0 = np.matrix(x0)                     #将输入的初始状态列表向量化
+    A_2 = np.matrix(A_1)                     
+    x_ini = x0[:]                          #save initial state
+    x0 = np.matrix(x0)                    
     
-    x_mid = A_2.T * x0.T                     #A第i行第j列代表第i个基因对第j个基因的影响，所以统计i基因收到的影响需将A转置
-    x_fin = [0] * len(A_2)                   #初始化最终更新状态向量
+    x_mid = A_2.T * x0.T                     #row i column j in A means gene i 's interaction to j, therefore A need to be transpose
+    x_fin = [0] * len(A_2)                   
     
-    for index in range(len(x_mid)):        #对每一个节点进行状态检查，按照上述【更新方法】对状态进行更新
+    for index in range(len(x_mid)):        #state check
         if int(x_mid[index]) > threshold[index]:
             x_fin[index] = 1
         if int(x_mid[index]) == threshold[index]:
@@ -524,7 +524,7 @@ def bio_update(A = None,x0 = None,threshold = None):
 
     return x_fin            #返回更新后的状态向量
 
-def list_duplicate_removal(L = None):        #将列表的列表去重的函数
+def list_duplicate_removal(L = None):        
     """function for remove list duplicate values"""
     if L == None:
         L = [
@@ -532,13 +532,13 @@ def list_duplicate_removal(L = None):        #将列表的列表去重的函数
                 [1,0,0],
                 [0,1,0]
             ]
-    """以上是默认参数设定环节"""    
+     """Parameter setting part ends here"""   
         
-    b_list = []              #建立一个新列表
+    b_list = []             
     for i in L:              
-        if i not in b_list:        #扫描A，将A中不存在于B中的元素放在B中
+        if i not in b_list:        
             b_list.append(i)
-    return b_list             #返回B
+    return b_list            
 
 def A_replace(A = None,position = None,interaction = None):
     """
@@ -558,29 +558,29 @@ def A_replace(A = None,position = None,interaction = None):
                 (0,0,0,0,0,-1,0,0,0),
                 (0,0,0,0,0,1,0,0,0),
                 (0,0,1,1,0,0,1,-1,-1)
-            )      #使用不可变默认参数，防止多次调用时默认参数改变的问题
-    if position == None: #使用不可变默认参数，防止多次调用时默认参数改变的问题
+            )      
+    if position == None: 
         position = [0,0]        
-    if interaction == None: #使用不可变默认参数，防止多次调用时默认参数改变的问题
+    if interaction == None: 
         interaction = 0
-    """以上是默认参数设定环节"""    
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
         
     if len(position) != 2:
-         raise AssertionError("替换位置坐标position应为一个二维列表")
+         raise AssertionError("position should be 2 dimension")
     if interaction != 0 and interaction != -1 and interaction != 1:
-        raise AssertionError("替换interaction应为0或正负1中的一个值")
+        raise AssertionError("interaction should be either 0 or -1 or 1")
     
     row = position[0]
     col = position[1]   
-    A_1[row][col] = interaction #将A中position对应位置的状态改为interaction对应的状态
+    A_1[row][col] = interaction
     
     for i in range(len(A_1)):
         A_1[i] = tuple(A_1[i])
-    """压缩过程"""
+    """zip part"""
     A_2 = tuple(A_1)
     return A_2
 
@@ -604,31 +604,31 @@ def graph_from_A(A = None,draw = 1, Nodes = None):
                 (0,0,0,0,0,-1,0,0,0),
                 (0,0,0,0,0,1,0,0,0),
                 (0,0,1,1,0,0,1,-1,-1)
-            )      #使用不可变默认参数，防止多次调用时默认参数改变的问题
+            )      
         
     if Nodes == None:
-        Nodes = ['SK','Cdc2/Cdc13','Ste9','Rum1','Slp1','Cdc2/Cdc13*','Wee1/Mik1','Cdc25','PP'] #使用不可变默认参数，防止多次调用时默认参数改变的问题
+        Nodes = ['SK','Cdc2/Cdc13','Ste9','Rum1','Slp1','Cdc2/Cdc13*','Wee1/Mik1','Cdc25','PP'] 
         
-    """以上为默认参数调用环节"""
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
-    G = nx.DiGraph() #产生一张空的图
+    """unzip part ends here"""
+    G = nx.DiGraph() #generalized a new graph
     
-    for i in Nodes: #添加节点
+    for i in Nodes: #add nodes
         G.add_node(i)
      
-    for i in range(len(A_1)): #添加连边
+    for i in range(len(A_1)): #add edges
         for j in range(len(A_1)):
             if A[i][j] != 0:
                 G.add_weighted_edges_from([(Nodes[i], Nodes[j],A_1[i][j])])
     
-    if draw == 1: #如果draw=1,就把G画出来
+    if draw == 1: #if draw = 1, plot
         nx.draw(G,pos = nx.circular_layout(G))  
         plt.show()
     """
-    可用layout包括：
+    layout including:
     *bipartite_layout(G, nodes[, align, scale, . . . ]), Position nodes in two straight lines.
     circular_layout(G[, scale, center, dim]), Position nodes on a circle.
     kamada_kawai_layout(G[, dist, pos, weight, . . . ]), Position nodes using Kamada-Kawai path-length costfunction.
@@ -682,7 +682,7 @@ def Reachability_matrix(A = None):
                     R[i][k] = 1    
                     
     #elapsed = (time.process_time() - start)
-    #print("总计用时",elapsed)
+    #print(elapsed)
                        
     return R
     
@@ -691,13 +691,13 @@ def DReSS(A = np.array([[1,0,0],[0,1,0],[0,0,0]]), B = np.array([[1,0,1],[0,1,0]
     Function for calculating DReSS value
     A and B are two modified reachablity matrix
     """
-    simi = 0 #初始化相似度
+    simi = 0
     for i in range(len(A)):
         for j in range(len(A)):
             if A[i][j] != B[i][j]:
-                simi += 1 #每发现一个相同的位置，相似度加一
-    simi_std = simi / (len(A) * len(A)) #标准化相似度，除以向量长度，是的标准相似度最大为1，最小为0
-    return simi_std #返回三个值，相似度，向量长度，标准化相似度
+                simi += 1 
+    simi_std = simi / (len(A) * len(A)) you 
+    return simi_std 
 
 def haming_diag(A = (1,0,1),B = (0,1,1)):
     """
@@ -727,27 +727,27 @@ def mat_find_zero(A = None):
                 (0,0,0,0,0,-1,0,0,0),
                 (0,0,0,0,0,1,0,0,0),
                 (0,0,1,1,0,0,1,-1,-1)
-            )      #使用不可变默认参数，防止多次调用时默认参数改变的问题
-    """以上为默认参数调用环节"""
+            )      
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
     
-    size_1 = len(A_1) #计算A矩阵行数
-    for i in range(size_1): #检索每一行元素数是否与总行数相同
+    size_1 = len(A_1) 
+    for i in range(size_1): 
         if len(A_1[i]) != size_1:
-            raise AssertionError("输入矩阵应为方阵")
+            raise AssertionError("A should be N*N matrix")
     
-    pos = [] #初始化位置列表
-    for i in range(size_1): #检查每一行
-        for j in range(size_1): #检查每一列
-            if A_1[i][j] == 0: #如果元素等于0
-                pos.append((i,j)) #记录位置
+    pos = [] 
+    for i in range(size_1): 
+        for j in range(size_1): 
+            if A_1[i][j] == 0: 
+                pos.append((i,j)) 
                 
-    pos = tuple(pos) #将位置列表转化为不可变的tuple
+    pos = tuple(pos) 
     
-    return pos #返回pos
+    return pos 
 
 def mat_find_nonzero(A = None):
     """
@@ -764,27 +764,27 @@ def mat_find_nonzero(A = None):
                 (0,0,0,0,0,-1,0,0,0),
                 (0,0,0,0,0,1,0,0,0),
                 (0,0,1,1,0,0,1,-1,-1)
-            )      #使用不可变默认参数，防止多次调用时默认参数改变的问题
-    """以上为默认参数调用环节"""
+            )     
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
     
-    size_1 = len(A_1) #计算A矩阵行数
-    for i in range(size_1): #检索每一行元素数是否与总行数相同
+    size_1 = len(A_1) 
+    for i in range(size_1): 
         if len(A_1[i]) != size_1:
-            raise AssertionError("输入矩阵应为方阵")
+            raise AssertionError("A should be N*N matrix")
     
-    pos = [] #初始化位置列表
-    for i in range(size_1):  #检查每一行
-        for j in range(size_1): #检查每一列
-            if A_1[i][j] != 0: #如果元素不等于0
-                pos.append((i,j)) #记录位置
+    pos = [] 
+    for i in range(size_1):  
+        for j in range(size_1): 
+            if A_1[i][j] != 0: 
+                pos.append((i,j)) 
                 
-    pos = tuple(pos) #将位置列表转化为不可变的tuple
+    pos = tuple(pos)
      
-    return pos #返回pos
+    return pos 
 
 def graph2matrix(G = None,nettype = 'ER'):
     """
@@ -837,12 +837,12 @@ def rand_negative(A = None, rate = 0.72):
                 (0,0,0,0,0,-1,0,0,0),
                 (0,0,0,0,0,1,0,0,0),
                 (0,0,1,1,0,0,1,-1,-1)
-            )      #使用不可变默认参数，防止多次调用时默认参数改变的问题
-    """以上为默认参数调用环节"""
+            )    
+     """Parameter setting part ends here"""
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
     pos = mat_find_nonzero(A = A)
     n = len(pos)
     for i in range(n):
@@ -852,7 +852,7 @@ def rand_negative(A = None, rate = 0.72):
             
     for i in range(len(A_1)):
         A_1[i] = tuple(A_1[i])
-    """压缩过程"""
+    """zip part"""
     A_2 = tuple(A_1)
     return A_2
 
@@ -879,64 +879,64 @@ def Basin_with_plot(A = None,threshold = None):
             )  
     if threshold == None:
         threshold = [0,-1,0,0,0,0,0,0,0]       
-    """以上是默认参数设定环节"""    
+     """Parameter setting part ends here"""    
     A_1 = list(A)
     for i in range(len(A_1)):
         A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
+    """unzip part ends here"""
     
-    if len(A_1) != len(threshold):                                       #A threshold的维度必须相同，即网络节点数
-        raise AssertionError("邻接矩阵维度与阈值向量维度不匹配")      
+    if len(A_1) != len(threshold):                                       #A threshold must be with same dimension
+        raise AssertionError("A threshold must be with same dimension")      
     else:
         dim = len(A_1)
         
-    state_space = list(itertools.product([0,1],repeat = dim))          #初始化全部状态空间
-    state_space_distribution = dict((('attractor',[]),('basin',[])))    #初始化状态空间分布
-    for i in range(len(state_space)):                                  #将生成的状态空间中的tuple改为list
+    state_space = list(itertools.product([0,1],repeat = dim))          #initialize state space
+    state_space_distribution = dict((('attractor',[]),('basin',[])))    #initialize state space distribution
+    for i in range(len(state_space)):                                  
         state_space[i] = list(state_space[i])
     Source_index_list = []
     Target_index_list = []
     state_space_tuple = list(itertools.product([0,1],repeat = dim))
         
-    flag = 0       #flag等于零说明要从现存的状态中随机取一个，等于1说明仍在迭代中
-    judge = 0      #judge等于0说明未出现过的吸引子，等于1说明出现过
-    x_tem = []     #初始化中间值
+    flag = 0       #flag = 0 means need to get a new remaining state, flag = 1 means are continuously updating
+    judge = 0      #judge=0 means there is a new attractor, judge = 1 means attractor has been collected
+    x_tem = []     
     b = []    
     R_0 = [0] * len(state_space_tuple)
     R_mat = [R_0] * len(state_space_tuple)
     R = np.array(R_mat)
     
-    while len(state_space) > 0:       #在剩余状态空间非空的情况下，持续迭代
-        if flag == 0:                 #如果flag=0，说明已经取到吸引子，则在剩余状态空间中任取一个（默认取第一个）开始新的迭代，并将已经更新的中间状态集合清空
+    while len(state_space) > 0:       #when there are still states not have been updated, continously update
+        if flag == 0:                 #flag = 0 means updated to an attractor, need to get a new remaining state
             x0 = state_space[0]
             tem = []
             tem_index = []
-        else:                         #如果flag=1，说明未到吸引子，则继续迭代
+        else:                         #flag = 1 means current state is not attractor, need to continuously updating
             x0 = x_tem
         
         Source_index = state_space_tuple.index(tuple(x0))
         Source_index_list.append(Source_index)
-        tem.append(x0)                #将x0加入到中间状态集合中
+        tem.append(x0)                
         tem_index.append(Source_index)
-        x_tem = bio_update(A,x0,threshold)   #利用bio_update函数，更新一次x0
+        x_tem = bio_update(A,x0,threshold)   
         Target_index = state_space_tuple.index(tuple(x_tem))
         Target_index_list.append(Target_index)
         
 
         
-        if x_tem in tem:                 #如果更新后的x_tem已经出现在过tem集合中，说明取到吸引子，等于tem最后一个说明为不动点，取到tem中间的为极限环
-            pos = tem.index(x_tem)       #确定x_tem在tem中出现位置
-            if len(state_space_distribution['attractor']) > 0:        #如果已经有吸引子，则需要确认是否为已经出现过的吸引子
-                judge = 0                                             #先将judge归为0
-                for i in range(len(state_space_distribution['attractor'])):       #检查对比所有已知吸引子
-                    if x_tem in state_space_distribution['attractor'][i] or x_tem in state_space_distribution['attractor']:  #如果x_tem出现在了已知极限环，或已知不动点中，更新judge=1，并记录对应吸引子坐标ind
+        if x_tem in tem:                 #if x_tem in tem, means x_tem is an attractor
+            pos = tem.index(x_tem)       #find x_tem's position
+            if len(state_space_distribution['attractor']) > 0:        #if there are already other attractor, need to know is x_tem already there
+                judge = 0                                             
+                for i in range(len(state_space_distribution['attractor'])):       
+                    if x_tem in state_space_distribution['attractor'][i] or x_tem in state_space_distribution['attractor']:
                         judge = 1
                         ind = i
                         
-            if judge == 0:   #如果是新的吸引子
-                state_space_distribution['attractor'].append(tem[pos:])   #记录吸引子
-                state_space_distribution['basin'].append(tem)   #记录吸引盆
-                for i in range(len(tem)):      #从剩余状态空间中移除所有中间过程出现过的状态
+            if judge == 0:   #if x_tem is a new attractor
+                state_space_distribution['attractor'].append(tem[pos:])   #attractor recording
+                state_space_distribution['basin'].append(tem)   #attractor basin recording
+                for i in range(len(tem)):      #remove all states in basin from remaining states
                     if tem[i] in state_space:
                         state_space.remove(tem[i])
                 
@@ -945,17 +945,17 @@ def Basin_with_plot(A = None,threshold = None):
                     for r_n in range(len(tem) - r_0):
                         R[tem_index[r_0]][tem_index[r_0 + r_n + 1]] = 1
                 
-                del tem          #删除中间状态
+                del tem          #clear tem
                 del tem_index
-                flag = 0         #将flag置为0，开始新一轮迭代
-            else:    #否则，即为已经出现过得吸引子不记录吸引子，直接将中间状态存储至basin中
-                if len(tem) == 1:                 #如果只有一个状态则直接记录       
+                flag = 0         #clear flag
+            else:    #else, x_tem is already there, just add new basin states to existing attractor basin
+                if len(tem) == 1:                 
                     state_space_distribution['basin'][ind].append(tem)   
-                else:       #如果有多个状态，则把list拆开一个一个记录
+                else:       
                     for i in range(len(tem)):
                         state_space_distribution['basin'][ind].append(tem[i])
                         
-                for i in range(len(tem)):  #从剩余状态空间中移除所有中间过程出现过的状态
+                for i in range(len(tem)):  #remove all states in basin from remaining states
                     if tem[i] in state_space:
                         state_space.remove(tem[i])
                         
@@ -964,18 +964,18 @@ def Basin_with_plot(A = None,threshold = None):
                     for r_n in range(len(tem) - r_0):
                         R[tem_index[r_0]][tem_index[r_0 + r_n + 1]] = 1
                         
-                del tem #删除中间状态
+                del tem #clear tem
                 del tem_index
-                del ind #删除吸引子位置坐标
-                flag = 0 #重置flag开始新一轮的迭代
+                del ind 
+                flag = 0 #clear flag
         else:
-            flag = 1  #如果x_tem不在tem中，说明不是吸引子，直接迭代下一轮
+            flag = 1 #x_tem is not attractor, keep on updating
         
 
-    for i in range(len(state_space_distribution['basin'])):   #将basin去重（吸引子会在basin中出现多次）
-        b.append(list_duplicate_removal(state_space_distribution['basin'][i]))   #利用list_duplicate_removal函数对list的list去重
+    for i in range(len(state_space_distribution['basin'])):   #remove basin duplicated value
+        b.append(list_duplicate_removal(state_space_distribution['basin'][i]))   
                 
-    state_space_distribution.update(basin=b)   #更新无重复的basin，basin的总长度和应为2^dim
+    state_space_distribution.update(basin=b)  
     Source_index_list = tuple(Source_index_list)
     Target_index_list = tuple(Target_index_list)
     state_space_network = tuple([Source_index_list,Target_index_list])
@@ -989,7 +989,7 @@ def Basin_with_plot(A = None,threshold = None):
     Id_2 = list(range(len(state_space_tuple)))
     dataframe = pd.DataFrame({'Id':Id_2,'Label':state_space_tuple})
     dataframe.to_csv("nodes.csv",index=False,sep=',')   
-    return state_space_network, R  #返回状态空间的分布
+    return state_space_network, R
 
 
 def trace(A = None):
