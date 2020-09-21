@@ -474,19 +474,16 @@ def result_fit(result = 0):
 
         
 def bio_update(A = None,x0 = None,threshold = None):
-    """投票更新函数
-    调用方法为bio_update(A,x0,threshold)
-    A为邻接矩阵，默认值为[[0,1,0],[-1,0,1],[1,-1,0]]
-    x0为初始状态,默认值为[1,0,0]
-    threshold为投票阈值，默认值为[0,-1,0]
-    更新方法：
-        网络中存在促进边以及抑制边，当一个节点所有已激活的邻居（状态为1）中：
-            ①促进邻居减去抑制邻居高于阈值时，状态变为1；
-            ②促进邻居减去抑制邻居低于阈值时，状态变为0；
-            ③促进邻居减去抑制邻居等于阈值时，状态不改变；
-            
-    注意：        
-    x0、A、threshold三者大小应匹配，否则报错"""
+    """state updating function for one step update
+    There are 3 parameters
+    A is the adjacency matrix for origin system
+    x0 is the current state
+    threshold is the updating threshold
+    function returns to x0's next time step state
+    
+    Notice: A x0 threshold must with same dimension
+        Otherwise function return to error
+    """
     if A == None:
         A = (
                 (0,1,0),
@@ -528,10 +525,13 @@ def bio_update(A = None,x0 = None,threshold = None):
     return x_fin            #返回更新后的状态向量
 
 def Basin(A = None,threshold = None):
-    """阈值投票更新方式网络的吸引盆求解函数
-    A为网络的邻接矩阵
-    threshold为网络的更新阈值
-    返回值为一字典描述状态空间分布，其中“attactor”键的取值为全部吸引子，“basin”键的取值为吸引子对应的吸引盆
+    """Function for calculating the attractor basion of a system with adjacency matrix A
+    there are two parameters
+    A is the adjacency matrix of origin system
+    threshold is the updating threshold
+    function return to a dictionary
+    keys are atrractors
+    and key's value is the basin of corresponding key 
     """
     if A == None:
         A = (
@@ -620,7 +620,7 @@ def Basin(A = None,threshold = None):
     return state_space_distribution  #返回状态空间的分布
 
 def list_duplicate_removal(L = None):        #将列表的列表去重的函数
-    """将列表的列表去重，仅限去除一层"""
+    """function for remove list duplicate values"""
     if L == None:
         L = [
                 [1,0,0],
@@ -637,11 +637,10 @@ def list_duplicate_removal(L = None):        #将列表的列表去重的函数
 
 def A_replace(A = None,position = None,interaction = None):
     """
-    替换邻接矩阵函数
-    可以替换邻接矩阵A中位置为position的连边为interaction
-    其中A为邻接矩阵
-    position为对应位置，从[0,0]开始计数
-    interaction为-1,0,1中的某一值
+    Function for replace one positon's value with interaction value
+    A is the adjacency matrix
+    position is the replace target positon 
+    interaction is the new value to replace the origin value
     """
     if A == None:
         A = (
@@ -682,11 +681,11 @@ def A_replace(A = None,position = None,interaction = None):
 
 def graph_from_A(A = None,draw = 1, Nodes = None):
     """
-    通过邻接矩阵A构建网络
-    A为邻接矩阵
-    draw等于1时画图，draw=0时不画图
-    Nodes可以为节点提供名字，维数应与理解矩阵对应
-    需要调用networkx库
+    Function to turn agjacency matrix A into a graph which can be read by networkx package
+    draw can be chosen from follows:
+        1 plot network
+        0 do not plot network
+    Nodes can provide names for each node
     """
     
     if A == None:
@@ -761,46 +760,6 @@ def list_size(A = None):
         size_A += tem #将状态数加在大小中
         
     return size_A #返回大小
-
-def state_arrary(A = None):
-    """
-    状态向量函数，记录状态空间划分列表中的状态分布向量
-    假设共有N个状态（其中 N = 2^n,n为节点数量）
-    则 dim(state_arrary) = N(N-1)/2
-    记录了状态空间中任意两个状态是否处在同一个分支中，1代表在，2代表不在
-    列表从 (0,0,...,0) 按照二进制大小顺序依次排列至 (1,1,...,1)
-    state_arrary[0]记录(0,0,...,0,0)与(0,0,...,0,1)是否在同一分支中
-    state_arrary[1]记录(0,0,...,0,0)与(0,0,...,0,2)是否在同一分支中
-    ...
-    state_arrary[N-3]记录(1,1,...,0,0)与(1,1,...,1,0)是否在同一分支中
-    state_arrary[N-2]记录(1,1,...,0,0)与(1,1,...,1,1)是否在同一分支中
-    state_arrary[N-1]记录(1,1,...,1,0)与(1,1,...,1,1)是否在同一分支中
-    """
-    if A == None:
-        A = [[[0,0],[0,1]],[[1,0]],[[1,1]]]
-    """以上为默认参数调用环节"""    
-    
-    dim = len(A[0][0])
-    state_space = list(itertools.product([0,1],repeat = dim))          #初始化全部状态空间
-    arrary_A = [] #初始记录向量
-    
-    for i in range(len(state_space)): #扫描全部初始状态——————
-        tem_1 = list(state_space[i]) #记录状态1
-        pos_1 = None #清空状态1位置
-        for k in range(len(A)): #查找状态1在第几个分支里
-            if tem_1 in A[k]: 
-                pos_1 = k     #记录状态1分支   
-        for j in range(len(state_space) - i - 1): #及其之后的状态与其是否为同一分支之中
-            tem_2 = list(state_space[i+j+1]) #记录状态2
-            pos_2 = None #清空状态2位置
-            for k in range(len(A)): #查找状态2在第几个分支里
-                if tem_2 in A[k]:
-                    pos_2 = k #记录状态2分支   
-            if pos_1 == pos_2:
-                arrary_A.append(1) #如果状态1与状态2在同一分支中，向arrary中添加1
-            else:
-                arrary_A.append(0) #如果状态1与状态2不在同一分支中，向arrary中添加0
-    return arrary_A #返回向量
 
 def Adjacency_marix(a = None):
     if a == None:
