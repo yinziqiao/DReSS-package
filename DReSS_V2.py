@@ -524,101 +524,6 @@ def bio_update(A = None,x0 = None,threshold = None):
 
     return x_fin            #返回更新后的状态向量
 
-def Basin(A = None,threshold = None):
-    """Function for calculating the attractor basion of a system with adjacency matrix A
-    there are two parameters
-    A is the adjacency matrix of origin system
-    threshold is the updating threshold
-    function return to a dictionary
-    keys are atrractors
-    and key's value is the basin of corresponding key 
-    """
-    if A == None:
-        A = (
-                (-1,0,-1,-1,0,0,0,0,0),
-                (0,0,-1,-1,0,0,-1,1,0),
-                (0,-1,0,0,0,-1,0,0,0),
-                (0,-1,0,0,0,-1,0,0,0),
-                (0,-1,0,0,-1,-1,0,0,1),
-                (0,0,-1,-1,1,0,0,0,0),
-                (0,0,0,0,0,-1,0,0,0),
-                (0,0,0,0,0,1,0,0,0),
-                (0,0,1,1,0,0,1,-1,-1)
-            )  
-    if threshold == None:
-        threshold = [0,-1,0,0,0,0,0,0,0]       
-    """以上是默认参数设定环节"""    
-    A_1 = list(A)
-    for i in range(len(A_1)):
-        A_1[i] = list(A_1[i])    
-    """以上是解压环节"""
-    
-    if len(A_1) != len(threshold):                                       #A threshold的维度必须相同，即网络节点数
-        raise AssertionError("邻接矩阵维度与阈值向量维度不匹配")      
-    else:
-        dim = len(A_1)
-        
-    state_space = list(itertools.product([0,1],repeat = dim))          #初始化全部状态空间
-    state_space_distribution = dict((('attractor',[]),('basin',[])))    #初始化状态空间分布
-    for i in range(len(state_space)):                                  #将生成的状态空间中的tuple改为list
-        state_space[i] = list(state_space[i])
-        
-    flag = 0       #flag等于零说明要从现存的状态中随机取一个，等于1说明仍在迭代中
-    judge = 0      #judge等于0说明未出现过的吸引子，等于1说明出现过
-    x_tem = []     #初始化中间值
-    b = []    
-    
-    while len(state_space) > 0:       #在剩余状态空间非空的情况下，持续迭代
-        if flag == 0:                 #如果flag=0，说明已经取到吸引子，则在剩余状态空间中任取一个（默认取第一个）开始新的迭代，并将已经更新的中间状态集合清空
-            x0 = state_space[0]
-            tem = []
-        else:                         #如果flag=1，说明未到吸引子，则继续迭代
-            x0 = x_tem
-        
-        tem.append(x0)                #将x0加入到中间状态集合中
-        x_tem = bio_update(A,x0,threshold)   #利用bio_update函数，更新一次x0
-        
-        if x_tem in tem:                 #如果更新后的x_tem已经出现在过tem集合中，说明取到吸引子，等于tem最后一个说明为不动点，取到tem中间的为极限环
-            pos = tem.index(x_tem)       #确定x_tem在tem中出现位置
-            if len(state_space_distribution['attractor']) > 0:        #如果已经有吸引子，则需要确认是否为已经出现过的吸引子
-                judge = 0                                             #先将judge归为0
-                for i in range(len(state_space_distribution['attractor'])):       #检查对比所有已知吸引子
-                    if x_tem in state_space_distribution['attractor'][i] or x_tem in state_space_distribution['attractor']:  #如果x_tem出现在了已知极限环，或已知不动点中，更新judge=1，并记录对应吸引子坐标ind
-                        judge = 1
-                        ind = i
-                        
-            if judge == 0:   #如果是新的吸引子
-                state_space_distribution['attractor'].append(tem[pos:])   #记录吸引子
-                state_space_distribution['basin'].append(tem)   #记录吸引盆
-                for i in range(len(tem)):      #从剩余状态空间中移除所有中间过程出现过的状态
-                    if tem[i] in state_space:
-                        state_space.remove(tem[i])
-                del tem          #删除中间状态
-                flag = 0         #将flag置为0，开始新一轮迭代
-            else:    #否则，即为已经出现过得吸引子不记录吸引子，直接将中间状态存储至basin中
-                if len(tem) == 1:                 #如果只有一个状态则直接记录       
-                    state_space_distribution['basin'][ind].append(tem)   
-                else:       #如果有多个状态，则把list拆开一个一个记录
-                    for i in range(len(tem)):
-                        state_space_distribution['basin'][ind].append(tem[i])
-                        
-                for i in range(len(tem)):  #从剩余状态空间中移除所有中间过程出现过的状态
-                    if tem[i] in state_space:
-                        state_space.remove(tem[i])
-                del tem #删除中间状态
-                del ind #删除吸引子位置坐标
-                flag = 0 #重置flag开始新一轮的迭代
-        else:
-            flag = 1  #如果x_tem不在tem中，说明不是吸引子，直接迭代下一轮
-        
-
-    for i in range(len(state_space_distribution['basin'])):   #将basin去重（吸引子会在basin中出现多次）
-        b.append(list_duplicate_removal(state_space_distribution['basin'][i]))   #利用list_duplicate_removal函数对list的list去重
-                
-    state_space_distribution.update(basin=b)   #更新无重复的basin，basin的总长度和应为2^dim
-        
-    return state_space_distribution  #返回状态空间的分布
-
 def list_duplicate_removal(L = None):        #将列表的列表去重的函数
     """function for remove list duplicate values"""
     if L == None:
@@ -736,32 +641,13 @@ def graph_from_A(A = None,draw = 1, Nodes = None):
     """
     return G
 
-def list_size(A = None):
-    """
-    计算状态空间划分列表A中的全部状态数
-    A的格式应为一个列表，
-    列表中划分为同一分支的状态为一个列表，
-    每一个状态也为一个列表，
-    即使一个分支中仅有一个状态，同样要分为列表的列表，具体示例如下：
-    A = [[[0,0],[0,1]],
-         [[1,0]],
-         [[1,1]]]
-    """
-    if A == None:
-        A = [[[0,0],[0,1]],
-             [[1,0]],
-             [[1,1]]]
-    """以上为默认参数调用环节"""   
-    
-    length = len(A) #记录A中分支数目
-    size_A = 0 #初始化大小
-    for i in range(length):  #扫描每一个分支
-        tem = len(A[i]) #tem记录分支中状态数
-        size_A += tem #将状态数加在大小中
-        
-    return size_A #返回大小
-
 def Adjacency_marix(a = None):
+    """Function to get adjacency matrix from a adjacency list
+    input a is a 2 row tuple
+    first row is source
+    second row is target
+    function return to a's corresponding adjacency matrix
+    """
     if a == None:
         a = ((0,1,1),(1,0,1))
         
@@ -776,7 +662,11 @@ def Adjacency_marix(a = None):
     return A
 
 def Reachability_matrix(A = None):
-    
+    """
+    Function to get modified Reachability matrix R
+    input A is the adjacency matrix of state space
+    function returns to the modified reachability matrix of state space with adjacency matrix A
+    """
     #start = time.process_time()    
     if A.any() == None:
         A = np.array([[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,1]])    
@@ -797,7 +687,10 @@ def Reachability_matrix(A = None):
     return R
     
 def DReSS(A = np.array([[1,0,0],[0,1,0],[0,0,0]]), B = np.array([[1,0,1],[0,1,0],[1,0,1]])):
-
+    """
+    Function for calculating DReSS value
+    A and B are two modified reachablity matrix
+    """
     simi = 0 #初始化相似度
     for i in range(len(A)):
         for j in range(len(A)):
@@ -807,7 +700,10 @@ def DReSS(A = np.array([[1,0,0],[0,1,0],[0,0,0]]), B = np.array([[1,0,1],[0,1,0]
     return simi_std #返回三个值，相似度，向量长度，标准化相似度
 
 def haming_diag(A = (1,0,1),B = (0,1,1)):
-    
+    """
+    function for calculating diagDReSS
+    A and B are diag array of two modified reachablity matrix
+    """
     simi = 0
     for i in range(len(A)):
         if A[i] != B[i]:
@@ -816,39 +712,9 @@ def haming_diag(A = (1,0,1),B = (0,1,1)):
     simi_std = simi / len(A)
     return simi_std
 
-def haming_simi_basin(Basin_A = None, Basin_B = None):
-    """
-    计算两个状态分布空间对应的状态分布向量的haming相似度
-    输入两个状态分布空间
-    计算两个状态分布向量
-    进而计算相似度
-    返回三个值：
-    相似维数，状态空间大小，标准化相似度
-    标准化相似度为0-1之间取值，1为完全相同，0为完全不同
-    """
-    if Basin_A == None:
-        Basin_A = [[[0,0],[0,1]],[[1,0]],[[1,1]]]
-    if Basin_B == None:
-        Basin_B = [[[0,0],[0,1],[1,0]],[[1,1]]]
-    """以上为默认参数调用环节"""
-    
-    arrary_A = Reachability_matrix(Adjacency_marix(Basin_A)) #生成状态空间A的分布向量
-    arrary_B = Reachability_matrix(Adjacency_marix(Basin_B)) #生成状态空间B的分布向量
-    simi = 0 #初始化相似度
-    for i in range(len(arrary_A)):
-        for j in range(len(arrary_A)):
-            if arrary_A[i][j] != arrary_B[i][j]:
-                simi += 1 #每发现一个不同的位置，距离加一
-    
-    simi_std = simi / (len(arrary_A)^2) #标准化相似度，除以向量长度，是的标准相似度最大为1，最小为0
-    return simi_std #返回三个值，相似度，向量长度，标准化相似度
-
 def mat_find_zero(A = None):
     """
-    查找邻接矩阵中零元素的位置
-    输入的必须为方阵，否则报错
-    返回值为一个数组tuple，里面每一个元素为对应矩阵中的坐标
-    从[0,0]开始
+    Function for find all position of zero values in an adjacency matrix A 
     """
     if A == None:
         A = (
@@ -885,10 +751,7 @@ def mat_find_zero(A = None):
 
 def mat_find_nonzero(A = None):
     """
-    查找邻接矩阵中非零元素的位置
-    输入的必须为方阵，否则报错
-    返回值为一个数组tuple，里面每一个元素为对应矩阵中的坐标
-    从[0,0]开始
+    Function for find all position of non-zero values in an adjacency matrix A 
     """
     if A == None:
         A = (
@@ -925,6 +788,7 @@ def mat_find_nonzero(A = None):
 
 def graph2matrix(G = None,nettype = 'ER'):
     """
+    function to turn network generalized by networkx into an adjacency matrix
     
     """
     if G == None:
@@ -934,7 +798,7 @@ def graph2matrix(G = None,nettype = 'ER'):
             G = nx.random_graphs.watts_strogatz_graph(9, 3, 0.3)
         elif nettype == 'BA':
             G = nx.random_graphs.barabasi_albert_graph(9, 1)
-        
+   """network parameters should be changed here"""     
 
     G_mid = pd.DataFrame(np.zeros([len(G.nodes()),len(G.nodes())]),index = G.nodes(),columns = G.nodes())
     for col_label,row_label in G.edges():
@@ -958,8 +822,10 @@ def graph2matrix(G = None,nettype = 'ER'):
     return G_mat
 
 def rand_negative(A = None, rate = 0.72):
-    """将矩阵A中的连边以概率rate变为抑制连边
-    原始矩阵中有18个抑制边 7个促进边"""
+    """function to randomly turn interaction in a random network into an inhibition interaction
+    rate is the probability of turning a normal interaction into an inhibition interaction
+    the defult value is set to 0.72 which is the rate of inhibition interaction in yeast cell cycle network
+    """
     if A == None:
         A = (
                 (-1,0,-1,-1,0,0,0,0,0),
@@ -991,10 +857,13 @@ def rand_negative(A = None, rate = 0.72):
     return A_2
 
 def Basin_with_plot(A = None,threshold = None):
-    """阈值投票更新方式网络的吸引盆求解函数
-    A为网络的邻接矩阵
-    threshold为网络的更新阈值
-    返回值为一字典描述状态空间分布，其中“attactor”键的取值为全部吸引子，“basin”键的取值为吸引子对应的吸引盆
+    """Function for calculating the attractor basion of a system with adjacency matrix A
+    there are two parameters
+    A is the adjacency matrix of origin system
+    threshold is the updating threshold
+    function return to a dictionary
+    keys are atrractors
+    and key's value is the basin of corresponding key 
     """
     if A == None:
         A = (
@@ -1124,6 +993,9 @@ def Basin_with_plot(A = None,threshold = None):
 
 
 def trace(A = None):
+    """
+    function for get adjacency matrix A's trace
+    """
     if A.any == None:
         A = np.array([[1,0,0],[0,1,0],[0,0,0]])
     
@@ -1135,7 +1007,9 @@ def trace(A = None):
     return tr
 
 def diag_array(A = np.array([[1,0,0],[0,1,0],[0,0,0]])):
-    
+    """
+    function for get adjacency matrix A's diag array
+    """
     diag = []
         
     for i in range(len(A)):
